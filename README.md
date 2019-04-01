@@ -1,0 +1,2 @@
+# intelektika-uostai
+intelektikos projektas
