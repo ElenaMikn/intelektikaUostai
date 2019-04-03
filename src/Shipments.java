@@ -44,6 +44,7 @@ public class Shipments {
     }
 
     public static double getF (ArrayList<Shipment> list, Ship intForWeight){
+        //EM. gal galima kaip nors į ciklą sudėti????
         double f1 =Math.ceil((Double.valueOf(list.get(0).getWeight())+Double.valueOf(list.get(1).getWeight())+Double.valueOf(list.get(2).getWeight()))/Double.valueOf(intForWeight.getMaxWeight()))+
         Math.ceil((Double.valueOf(list.get(3).getWeight())+Double.valueOf(list.get(4).getWeight())+Double.valueOf(list.get(5).getWeight()))/Double.valueOf(intForWeight.getMaxWeight()))+
         Math.ceil((Double.valueOf(list.get(6).getWeight())+Double.valueOf(list.get(7).getWeight())+Double.valueOf(list.get(8).getWeight()))/Double.valueOf(intForWeight.getMaxWeight()));
