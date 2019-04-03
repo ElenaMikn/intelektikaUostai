@@ -5,7 +5,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-    State s=new State(3,5);
+    State s=new State(3,5,0);
         s.mas[0][0]=0;
         s.mas[0][1]=3;
         s.mas[0][2]=1;
@@ -15,7 +15,12 @@ public class Main {
         s.mas[2][0]=3;
         s.mas[2][1]=0;
         s.mas[2][2]=0;
-        s.GetH();
+        //s.GetH();
+        List<Shipments> tempShipmentsList  = s.GetPath();
+        for (Shipments st: tempShipmentsList) {
+            System.out.println(st.port);
+
+        }
     }
 
 

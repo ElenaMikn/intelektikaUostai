@@ -1,20 +1,26 @@
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+
+
 public class State {
     public int[][] mas;
     public int port;
     int maxSize;
     int n;
-    int h;
-    public State(int n,int maxSize)
+    List<Shipments> rezShipmentsList;
+    // int h;
+    public State(int n,int maxSize, int port)
     {
         port=0;
         this.mas = new int[n][n];
         this.maxSize=maxSize;
+        this.port=port;
         this.n=n;
+         rezShipmentsList = new ArrayList<Shipments>();
     }
     public int GetH(int[][] mas)
     {
-        //double f1 =Math.ceil();
         int h1=0;
         int h2=0;
         for (int i=0;i<n;i++)
@@ -29,48 +35,83 @@ public class State {
             h1+=Math.ceil(k1/n);
             h2+=Math.ceil(k2/n);
         }
-        h=Math.max(h1,h2);
+       int h=Math.max(h1,h2);
         return h;
     }
-    public int TryPort(int port, int[] vals)
+
+    public int[][] trasformMas(Shipments shipments)
     {
         int[][] b = Arrays.copyOf(mas, mas.length);
-        b[port][port]-=vals[port];
+        b[shipments.port][shipments.port]-=shipments.vals[shipments.port];
         for(int i=0;i<n;i++)
         {
-            if(i==port)
+            if(i==shipments.port)
                 continue;
-            b[port][i]+=vals[port];
+            b[shipments.port][i]+=shipments.vals[i];
         }
-        return GetH(b);
+        //shipments.h=GetH(b);
+        //return shipments.h;
         //ArrayUtils.clone(a);
-        //return 0;
-
+        return b;
     }
-    public void GetPath()
+    public  List<Shipments> GetPath()
     {
+        List<Shipments> ShipmentsList = new ArrayList<Shipments>();
+        int minH=n*n*maxSize;
         for(int i=0;i<n;i++) // i - ikuri plaukiam
         {
             if(i==port)
                 continue;
-            int[] vals=new int[n];
-            vals[port]=0;
-            int maxForPort=Math.min(mas[port][i],maxSize);// maks kiek galime paimti
-            for (int k=0;k<maxForPort;k++) {
-                vals[i] =k;
+            //int[] vals=new int[n];
+                int maxForPort=Math.min(mas[port][i],maxSize);// maks kiek galime paimti
+            for (int k=0;k<=maxForPort;k++) {
+                Shipments shipments=new  Shipments(n,i);
+                shipments.vals[port]=0;
+
+                shipments.vals[i] =k;
                 for(int j=0;j<n;j++)// j kiti uostai
                 {
                     if(j==port || i==j)
                         continue;
                     int maxForPortNext=Math.min(mas[port][j],maxSize-k);// maks kiek galime paimti
-                    for (int f=0;f<maxForPortNext;f++) {
-                        vals[j] = f;
-                        TryPort(i,vals);
+                    for (int f=0;f<=maxForPortNext;f++) {
+                        shipments.vals[j] = f;
+                        int[][] b = trasformMas(shipments);
+                        shipments.h=GetH(b);
+                        if(shipments.h==0)//viska pristateme
+                        {
+                            rezShipmentsList.add(shipments);
+                            return rezShipmentsList;
+                        }
+                        ShipmentsList.add(shipments);
+
+                        if(minH>shipments.h)
+                            minH=shipments.h;
                     }
                 }
             }
 
         }
+        //-----
+        int tempMinH=9999;
+        List<Shipments> tempShipmentsList  = new ArrayList<Shipments>();;
+        Shipments tempShipments= null;
+        for (Shipments s: ShipmentsList) {
+            if(s.h==minH) {
+                State tempState=new State(n,maxSize,s.port);
+                tempState.mas=this.trasformMas(s);
+                List<Shipments> tempRez=tempState.GetPath();
+                if( tempRez.get(tempRez.size()-1).h<tempMinH) {
+                    tempShipmentsList=tempRez;
+                    tempShipments=s;
+               }
+                //Iterables.getLast(iterableList);
+            }
+
+        }
+        rezShipmentsList=tempShipmentsList;
+        rezShipmentsList.add(tempShipments);
+        return tempShipmentsList;
     }
 
 }
