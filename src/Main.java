@@ -1,6 +1,7 @@
 import java.lang.reflect.Array;
 import java.util.*;
 
+
 public class Main {
 
 
@@ -15,10 +16,11 @@ public class Main {
         s.mas[2][0]=3;
         s.mas[2][1]=0;
         s.mas[2][2]=0;
-        //s.GetH();
+
         List<Shipments> tempShipmentsList  = s.GetPath();
+
         for (Shipments st: tempShipmentsList) {
-            System.out.println(st.port);
+            System.out.println(st.port + " - [" + st.cargo[0] + " - " + st.cargo[1]+ " - " + st.cargo[2]+"]");
 
         }
     }

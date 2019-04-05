@@ -1,23 +1,19 @@
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-
-
 public class State {
     public int[][] mas;
     public int port;
     int maxSize;
     int n;
     List<Shipments> rezShipmentsList;
-    // int h;
+
     public State(int n,int maxSize, int port)
     {
-        port=0;
         this.mas = new int[n][n];
         this.maxSize=maxSize;
         this.port=port;
         this.n=n;
-         rezShipmentsList = new ArrayList<Shipments>();
+        rezShipmentsList = new ArrayList<Shipments>();
     }
     public int GetH(int[][] mas)
     {
@@ -32,27 +28,28 @@ public class State {
                 k1+=mas[i][k];
                 k2+=mas[k][i];
             }
-            h1+=Math.ceil(k1/n);
-            h2+=Math.ceil(k2/n);
+            h1+=Math.ceil(k1/Double.valueOf(maxSize));
+            h2+=Math.ceil(k2/Double.valueOf(maxSize));
         }
        int h=Math.max(h1,h2);
         return h;
     }
-
     public int[][] trasformMas(Shipments shipments)
     {
-        int[][] b = Arrays.copyOf(mas, mas.length);
-        b[shipments.port][shipments.port]-=shipments.vals[shipments.port];
+        int[][] newMas = new int[n][n];
+        //kopijuojam i nauja masyva
+        for(int i=0; i<n; i++)
+            for(int j=0; j<n; j++)
+                newMas[i][j]=mas[i][j];
+
         for(int i=0;i<n;i++)
         {
-            if(i==shipments.port)
-                continue;
-            b[shipments.port][i]+=shipments.vals[i];
+            newMas[this.port][i]-=shipments.cargo[i];//atimame is pradinio uosto
+            if(i!=shipments.port) {
+                newMas[shipments.port][i] += shipments.cargo[i];//pridatam tarpini krovini
+            }
         }
-        //shipments.h=GetH(b);
-        //return shipments.h;
-        //ArrayUtils.clone(a);
-        return b;
+        return newMas;
     }
     public  List<Shipments> GetPath()
     {
@@ -60,58 +57,53 @@ public class State {
         int minH=n*n*maxSize;
         for(int i=0;i<n;i++) // i - ikuri plaukiam
         {
-            if(i==port)
+            if (i == port)
                 continue;
-            //int[] vals=new int[n];
-                int maxForPort=Math.min(mas[port][i],maxSize);// maks kiek galime paimti
-            for (int k=0;k<=maxForPort;k++) {
-                Shipments shipments=new  Shipments(n,i);
-                shipments.vals[port]=0;
+            int maxForPort = Math.min(mas[port][i], maxSize);// maks kiek galime paimti
+            for (int k = 0; k <= maxForPort; k++) {
+                Shipments shipments = new Shipments(n, i);
+                shipments.cargo[port] = 0;
 
-                shipments.vals[i] =k;
-                for(int j=0;j<n;j++)// j kiti uostai
+                shipments.cargo[i] = k;
+                for (int j = 0; j < n; j++)// j kiti uostai
                 {
-                    if(j==port || i==j)
+                    if (j == port || i == j)
                         continue;
-                    int maxForPortNext=Math.min(mas[port][j],maxSize-k);// maks kiek galime paimti
-                    for (int f=0;f<=maxForPortNext;f++) {
-                        shipments.vals[j] = f;
+                    int maxForPortNext = Math.min(mas[port][j], maxSize - k);// maks kiek galime paimti
+                    for (int f = 0; f <= maxForPortNext; f++) {
+                        shipments.cargo[j] = f;
                         int[][] b = trasformMas(shipments);
-                        shipments.h=GetH(b);
-                        if(shipments.h==0)//viska pristateme
+                        shipments.h = GetH(b);
+                        if (shipments.h == 0)//viska pristateme
                         {
                             rezShipmentsList.add(shipments);
                             return rezShipmentsList;
                         }
                         ShipmentsList.add(shipments);
-
-                        if(minH>shipments.h)
-                            minH=shipments.h;
+                        if (minH > shipments.h)
+                            minH = shipments.h;
                     }
                 }
             }
-
         }
-        //-----
         int tempMinH=9999;
         List<Shipments> tempShipmentsList  = new ArrayList<Shipments>();;
         Shipments tempShipments= null;
         for (Shipments s: ShipmentsList) {
-            if(s.h==minH) {
+            if(s.h==minH && s.cargo[0]+s.cargo[1]+s.cargo[2]>0) {
                 State tempState=new State(n,maxSize,s.port);
                 tempState.mas=this.trasformMas(s);
                 List<Shipments> tempRez=tempState.GetPath();
-                if( tempRez.get(tempRez.size()-1).h<tempMinH) {
-                    tempShipmentsList=tempRez;
-                    tempShipments=s;
-               }
-                //Iterables.getLast(iterableList);
+                if(tempRez.get(tempRez.size()-1)!=null) {
+                    if (tempRez.get(tempRez.size() - 1).h < tempMinH) {
+                        tempShipmentsList = tempRez;
+                        tempShipments = s;
+                    }
+                }
             }
-
         }
         rezShipmentsList=tempShipmentsList;
-        rezShipmentsList.add(tempShipments);
+        rezShipmentsList.add(0,tempShipments);
         return tempShipmentsList;
     }
-
 }
