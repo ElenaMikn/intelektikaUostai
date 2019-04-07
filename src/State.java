@@ -5,14 +5,16 @@ public class State {
     public int port;
     int maxSize;
     int n;
+    int h;
     List<Shipments> rezShipmentsList;
 
-    public State(int n,int maxSize, int port)
+    public State(int n,int maxSize, int port, int h)
     {
         this.mas = new int[n][n];
         this.maxSize=maxSize;
         this.port=port;
         this.n=n;
+        this.h=h;
         rezShipmentsList = new ArrayList<Shipments>();
     }
     public int GetH(int[][] mas)
@@ -54,7 +56,7 @@ public class State {
     public  List<Shipments> GetPath()
     {
         List<Shipments> ShipmentsList = new ArrayList<Shipments>();
-        int minH=n*n*maxSize;
+        int minH=2147483647;
         for(int i=0;i<n;i++) // i - ikuri plaukiam
         {
             if (i == port)
@@ -80,26 +82,32 @@ public class State {
                             return rezShipmentsList;
                         }
                         ShipmentsList.add(shipments);
-                        if (minH > shipments.h)
+                        if (minH > shipments.h) {
                             minH = shipments.h;
+                        }
                     }
                 }
             }
         }
-        int tempMinH=9999;
+        int tempMinH=2147483647;
         List<Shipments> tempShipmentsList  = new ArrayList<Shipments>();;
         Shipments tempShipments= null;
         for (Shipments s: ShipmentsList) {
             if(s.h==minH && s.cargo[0]+s.cargo[1]+s.cargo[2]>0) {
-                State tempState=new State(n,maxSize,s.port);
+                State tempState=new State(n,maxSize,s.port,minH);
                 tempState.mas=this.trasformMas(s);
                 List<Shipments> tempRez=tempState.GetPath();
                 if(tempRez.get(tempRez.size()-1)!=null) {
                     if (tempRez.get(tempRez.size() - 1).h < tempMinH) {
                         tempShipmentsList = tempRez;
                         tempShipments = s;
+                        if(s.h==0)
+                        {
+                            break;
+                        }
                     }
                 }
+                s=null;
             }
         }
         rezShipmentsList=tempShipmentsList;
