@@ -21,11 +21,6 @@ public class Main {
         contentPane.setBackground(Color.WHITE);
         contentPane.setLayout(null);
 
-        /*JTextField field;
-        field = new JTextField(20);
-        field.setBounds(0, 0, 100, 20);
-        f.add(field);*/
-
         JLabel label_k_n = new JLabel();
         JLabel label_k_s = new JLabel();
         JLabel label_n_k = new JLabel();
@@ -81,7 +76,6 @@ public class Main {
         contentPane.add(label_s_n);
         contentPane.add(label_galia);
 
-
         label_k_n.setLabelFor(textfield_k_n);
         label_k_s.setLabelFor(textfield_k_s);
         label_n_k.setLabelFor(textfield_n_k);
@@ -89,7 +83,6 @@ public class Main {
         label_s_k.setLabelFor(textfield_s_k);
         label_s_n.setLabelFor(textfield_s_n);
         label_galia.setLabelFor(textfield_galia);
-
 
         contentPane.add(textfield_k_n);
         contentPane.add(textfield_k_s);
@@ -100,15 +93,9 @@ public class Main {
         contentPane.add(textfield_galia);
         contentPane.add(textfield_rez);
 
-
-
-
         JButton button = new JButton("Skaiciuoti");
         button.setSize(100, 30);
         button.setLocation(95, 170);
-
-
-
 
         button.addActionListener(new ActionListener() {
             @Override
@@ -130,14 +117,15 @@ public class Main {
                 s.mas[2][2]=0;//---
 
                 List<Shipments> tempShipmentsList  = s.GetPath();
-                JOptionPane.showMessageDialog(contentPane, tempShipmentsList.size());
                 String rez="";
+
                 for (Shipments st: tempShipmentsList) {
-                    rez=st.port==0?"I Klaipedos ":st.port==1?"I Niujorko    ":"I Sidniejaus";
-                    rez+= " - [" + st.cargo[0] + " - " + st.cargo[1]+ " - " + st.cargo[2]+"]\n";
-                    textfield_rez.append(rez);
+                    if(st!=null) {
+                        rez = st.port == 0 ? "I Klaipedos " : st.port == 1 ? "I Niujorko    " : "I Sidniejaus";
+                        rez += " - [" + st.cargo[0] + " - " + st.cargo[1] + " - " + st.cargo[2] + "]\n";
+                        textfield_rez.append(rez);
+                    }
                 }
-               //JOptionPane.showMessageDialog(contentPane, rez);
             }
         });
 
@@ -151,23 +139,6 @@ public class Main {
         f.setLocationRelativeTo(null);
         f.setSize(400, 500);
         f.setVisible(true);
-
-
-/*
-        jList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    double eur = Double.parseDouble(field.getText());
-                    ExchangeBack valiuta = valiutosBack.get(jList.getSelectedIndex());
-                    double kursas = Double.parseDouble(valiuta.getKursas());
-                    JOptionPane.showMessageDialog(null, field.getText() + " Euru yra " + eur * kursas + " " + valiuta.getPavadinimas());
-                }
-            }
-        });*/
-
-
-
 
     }
 

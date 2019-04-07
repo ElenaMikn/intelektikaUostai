@@ -16,6 +16,7 @@ public class State {
         this.n=n;
         this.h=h;
         rezShipmentsList = new ArrayList<Shipments>();
+
     }
     public int GetH(int[][] mas)
     {
@@ -93,7 +94,7 @@ public class State {
         List<Shipments> tempShipmentsList  = new ArrayList<Shipments>();;
         Shipments tempShipments= null;
         for (Shipments s: ShipmentsList) {
-            if(s.h==minH && s.cargo[0]+s.cargo[1]+s.cargo[2]>0) {
+            if(s.h==minH && s.cargo[0]+s.cargo[1]+s.cargo[2]>0 ) {
                 State tempState=new State(n,maxSize,s.port,minH);
                 tempState.mas=this.trasformMas(s);
                 List<Shipments> tempRez=tempState.GetPath();
