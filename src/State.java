@@ -56,6 +56,10 @@ public class State {
     }
     public  List<Shipments> GetPath()
     {
+        /*if(this.h==1)
+        {
+            System.out.println(this.port);
+        }*/
         List<Shipments> ShipmentsList = new ArrayList<Shipments>();
         int minH=2147483647;
         for(int i=0;i<n;i++) // i - ikuri plaukiam
@@ -90,6 +94,7 @@ public class State {
                 }
             }
         }
+
         int tempMinH=2147483647;
         List<Shipments> tempShipmentsList  = new ArrayList<Shipments>();;
         Shipments tempShipments= null;
@@ -99,7 +104,7 @@ public class State {
                 tempState.mas=this.trasformMas(s);
                 List<Shipments> tempRez=tempState.GetPath();
                 if(tempRez.get(tempRez.size()-1)!=null) {
-                    if (tempRez.get(tempRez.size() - 1).h < tempMinH) {
+                    if (tempRez.get(tempRez.size() - 1).h <= tempMinH) {
                         tempShipmentsList = tempRez;
                         tempShipments = s;
                         if(s.h==0)
@@ -109,6 +114,37 @@ public class State {
                     }
                 }
                 s=null;
+            }
+        }
+
+        if(tempShipmentsList.size()==0) //skirta kai reikia plaukti tusciam
+        {
+            for(int i=0;i<n;i++)
+            {
+                if (i == port)
+                    continue;
+                for(int k=0;k<n;k++)
+                {
+                    if (this.mas[i][k]>0) { // randam uosta kuriame dar yra kroviniu
+                        Shipments s=new Shipments(n,i);
+                        for (int f = 0; f < n; f++) {
+                            s.cargo[f] = 0;
+                        }
+                        State tempState=new State(n,maxSize,s.port,minH);
+                        tempState.mas=this.trasformMas(s);
+                        List<Shipments> tempRez=tempState.GetPath();
+                        if(tempRez.get(tempRez.size()-1)!=null) {
+                            if (tempRez.get(tempRez.size() - 1).h <= tempMinH) {
+                                tempShipmentsList = tempRez;
+                                tempShipments = s;
+                                if(s.h==0)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         rezShipmentsList=tempShipmentsList;

@@ -51,8 +51,8 @@ public class Main {
         textfield_k_s = new JTextField("1",3);
         textfield_n_k = new JTextField("2",3);
         textfield_n_s = new JTextField("4",3);
-        textfield_s_n = new JTextField("3",3);
-        textfield_s_k = new JTextField("0",3);
+        textfield_s_n = new JTextField("0",3);
+        textfield_s_k = new JTextField("3",3);
         textfield_galia = new JTextField("5",3);
 
         textfield_rez = new JTextArea(5,100);
@@ -66,7 +66,7 @@ public class Main {
         textfield_s_k.setBounds(130,90,40,30);
         textfield_s_n.setBounds(300,90,40,30);
         textfield_galia.setBounds(170,130,40,30);
-        textfield_rez.setBounds(10,200,400,200);
+        textfield_rez.setBounds(10,200,400,600);
 
         contentPane.add(label_k_n);
         contentPane.add(label_k_s);
@@ -121,7 +121,7 @@ public class Main {
 
                 for (Shipments st: tempShipmentsList) {
                     if(st!=null) {
-                        rez = st.port == 0 ? "I Klaipedos " : st.port == 1 ? "I Niujorko    " : "I Sidniejaus";
+                        rez = st.port == 0 ? "Į Klaipedą" : st.port == 1 ? "Į Niujorką " : "Į Sidniejų ";
                         rez += " - [" + st.cargo[0] + " - " + st.cargo[1] + " - " + st.cargo[2] + "]\n";
                         textfield_rez.append(rez);
                     }
@@ -137,7 +137,7 @@ public class Main {
         f.pack();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setLocationRelativeTo(null);
-        f.setSize(400, 500);
+        f.setSize(400, 900);
         f.setVisible(true);
 
     }
