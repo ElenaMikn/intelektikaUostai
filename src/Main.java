@@ -66,7 +66,7 @@ public class Main {
         textfield_s_k.setBounds(130,90,40,30);
         textfield_s_n.setBounds(300,90,40,30);
         textfield_galia.setBounds(170,130,40,30);
-        textfield_rez.setBounds(10,200,400,600);
+        textfield_rez.setBounds(10,200,400,1000);
 
         contentPane.add(label_k_n);
         contentPane.add(label_k_s);

@@ -11,14 +11,14 @@ public class State {
     public State(int n,int maxSize, int port, int h)
     {
         this.mas = new int[n][n];
-        this.maxSize=maxSize;
+        this.maxSize=maxSize;  // laivo kilimo galia
         this.port=port;
         this.n=n;
         this.h=h;
         rezShipmentsList = new ArrayList<Shipments>();
 
     }
-    public int GetH(int[][] mas)
+    public int GetH(int[][] mas) // surandome h
     {
         int h1=0;
         int h2=0;
@@ -31,16 +31,16 @@ public class State {
                 k1+=mas[i][k];
                 k2+=mas[k][i];
             }
-            h1+=Math.ceil(k1/Double.valueOf(maxSize));
+            h1+=Math.ceil(k1/Double.valueOf(maxSize));  //   ( (0+3+1)/5 =1 ) + (2+0+4)/5=2 + ((3+0+)/5=1) =
             h2+=Math.ceil(k2/Double.valueOf(maxSize));
         }
-       int h=Math.max(h1,h2);
+       int h=Math.max(h1,h2);  //
         return h;
     }
     public int[][] trasformMas(Shipments shipments)
     {
         int[][] newMas = new int[n][n];
-        //kopijuojam i nauja masyva
+        //kopijuojam i nauja masyva - busena
         for(int i=0; i<n; i++)
             for(int j=0; j<n; j++)
                 newMas[i][j]=mas[i][j];
@@ -48,13 +48,13 @@ public class State {
         for(int i=0;i<n;i++)
         {
             newMas[this.port][i]-=shipments.cargo[i];//atimame is pradinio uosto
-            if(i!=shipments.port) {
+            if(i!=shipments.port) {  // jegu i nesutapo su uostu, i kuri gabename (atplaukiam i N ir atvezem 1 t i S)
                 newMas[shipments.port][i] += shipments.cargo[i];//pridatam tarpini krovini
             }
         }
-        return newMas;
+        return newMas;  // grazina nauja busenu masiva
     }
-    public  List<Shipments> GetPath()
+    public  List<Shipments> GetPath()  // i koki juuosta kiek plugdis. zinuome is kurio pradedam
     {
         /*if(this.h==1)
         {
@@ -62,14 +62,14 @@ public class State {
         }*/
         List<Shipments> ShipmentsList = new ArrayList<Shipments>();
         int minH=2147483647;
-        for(int i=0;i<n;i++) // i - ikuri plaukiam
+        for(int i=0;i<n;i++) // i - i kuri plaukiam
         {
-            if (i == port)
+            if (i == port) // atmetam (negalime plaukti, kur stovim)
                 continue;
-            int maxForPort = Math.min(mas[port][i], maxSize);// maks kiek galime paimti
-            for (int k = 0; k <= maxForPort; k++) {
-                Shipments shipments = new Shipments(n, i);
-                shipments.cargo[port] = 0;
+            int maxForPort = Math.min(mas[port][i], maxSize);// maks kiek galime paimti  (3 K->N)
+            for (int k = 0; k <= maxForPort; k++) {//eina per svorius (0,1,2,3)
+                Shipments shipments = new Shipments(n, i); // n - uostu kiakis, i- kur plaukiam
+                shipments.cargo[port] = 0; //
 
                 shipments.cargo[i] = k;
                 for (int j = 0; j < n; j++)// j kiti uostai
@@ -79,12 +79,12 @@ public class State {
                     int maxForPortNext = Math.min(mas[port][j], maxSize - k);// maks kiek galime paimti
                     for (int f = 0; f <= maxForPortNext; f++) {
                         shipments.cargo[j] = f;
-                        int[][] b = trasformMas(shipments);
-                        shipments.h = GetH(b);
+                        int[][] b = trasformMas(shipments); // darom transformacija
+                        shipments.h = GetH(b);  // skaiciojame h
                         if (shipments.h == 0)//viska pristateme
                         {
                             rezShipmentsList.add(shipments);
-                            return rezShipmentsList;
+                            return rezShipmentsList;  // rekursija baigiame cia
                         }
                         ShipmentsList.add(shipments);
                         if (minH > shipments.h) {
@@ -96,18 +96,24 @@ public class State {
         }
 
         int tempMinH=2147483647;
+
         List<Shipments> tempShipmentsList  = new ArrayList<Shipments>();;
-        Shipments tempShipments= null;
-        for (Shipments s: ShipmentsList) {
-            if(s.h==minH && s.cargo[0]+s.cargo[1]+s.cargo[2]>0 ) {
+        Shipments tempShipments= null;  // objekta ne kuriame.
+        for (Shipments s: ShipmentsList)
+        {
+            if(s.h==minH && s.cargo[0]+s.cargo[1]+s.cargo[2]>0 ) // tikrina, ar maziausias h
+            {
                 State tempState=new State(n,maxSize,s.port,minH);
                 tempState.mas=this.trasformMas(s);
-                List<Shipments> tempRez=tempState.GetPath();
-                if(tempRez.get(tempRez.size()-1)!=null) {
-                    if (tempRez.get(tempRez.size() - 1).h <= tempMinH) {
-                        tempShipmentsList = tempRez;
-                        tempShipments = s;
-                        if(s.h==0)
+                List<Shipments> tempRez=tempState.GetPath(); // iskveciam rekursija. esame get path ir iskveciam get path
+
+                if(tempRez.get(tempRez.size()-1)!=null) // ar rezultatas nera tuscias . viskas blogai
+                {
+                    if (tempRez.get(tempRez.size() - 1).h <= tempMinH) {  // atrinkam geriausia kelia
+                        tempShipmentsList = tempRez; //issaugujam kolkas geriausia zinoma path
+                        tempShipments = s; // issaugijam geriausia siustima
+
+                        if(s.h==0)// viska pristateme
                         {
                             break;
                         }
